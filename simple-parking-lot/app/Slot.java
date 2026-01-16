@@ -1,6 +1,6 @@
 public class Slot {
     String type;
-    String vehicle;
+    Vehicle vehicle;
     String ticketId;
 
     public Slot(String type) {
