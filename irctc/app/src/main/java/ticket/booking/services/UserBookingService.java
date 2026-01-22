@@ -88,7 +88,7 @@ public class UserBookingService {
         }
 
         String finalTicketId = ticketId;
-        boolean removed = user.getTicketsBooked().removeIf(Ticket -> {Ticket.getTicketId().equals(finalTicketId)});
+        boolean removed = user.getTicketsBooked().removeIf(Ticket -> Ticket.getTicketId().equals(finalTicketId));
 
         if (removed){
             System.out.println(("ticket with id " + ticketId + "has been canceled"));
