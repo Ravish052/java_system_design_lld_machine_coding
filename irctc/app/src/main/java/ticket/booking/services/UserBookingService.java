@@ -9,13 +9,20 @@ import ticket.booking.entities.User;
 import ticket.booking.utils.UserServiceUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserBookingService {
 
     private User user;
@@ -24,15 +31,32 @@ public class UserBookingService {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final String USERS_PATH = "../localDb/users.json";
+    private static final String USERS_PATH = "localDb/users.json";
 
 
     public UserBookingService(User user1) throws IOException {
         this.user = user1;
-        File users = new File(USERS_PATH);
-        userList = objectMapper.readValue(users, new TypeReference<List<User>>() {
-        });
+        loadUsers();
     }
+
+    public UserBookingService() throws IOException {
+        loadUsers();
+    }
+
+    public List<User> loadUsers() throws IOException {
+        InputStream is = UserBookingService.class
+                .getClassLoader()
+                .getResourceAsStream(USERS_PATH);
+
+        if (is == null) {
+            throw new FileNotFoundException(
+                    "users.json not found in classpath at " + USERS_PATH
+            );
+        }
+
+        return userList = objectMapper.readValue(is, new TypeReference<List<User>>() {});
+    }
+
 
     public boolean loginUser() {
         Optional<User> foundUser = userList.stream()
@@ -103,7 +127,7 @@ public class UserBookingService {
     public List<Train> getTrains(String source, String destination){
         try {
             TrainService trainService = new TrainService();
-            return trainService.fetchTrains(source, destination);
+            return trainService.searchTrains(source, destination);
         }catch(IOException ex) {
             return new ArrayList<>();
         }
