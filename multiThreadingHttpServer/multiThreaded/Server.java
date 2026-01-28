@@ -11,8 +11,8 @@ public class Server {
     public Consumer<Socket> getConsumer() {
         return (clientSocket) -> {
             try{
-                PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream());
-                toClient.println("Helo to server");
+                PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
+                toClient.println("Hello from server " + clientSocket.getInetAddress());
                 toClient.close();
                 clientSocket.close();
 
