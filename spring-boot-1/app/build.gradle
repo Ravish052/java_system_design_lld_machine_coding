@@ -21,6 +21,13 @@ dependencies {
 
     // This dependency is used by the application.
     implementation libs.guava
+
+    implementation 'org.codehaus.groovy:groovy-all:3.0.9' // Include Groovy library
+
+    implementation 'cglib:cglib:3.3.0' // Include CGLIB library
+
+    // You may also need the following dependency for the ASM library (used by CGLIB)
+    implementation 'org.ow2.asm:asm:9.1'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -33,4 +40,12 @@ java {
 application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
+}
+
+run {
+    if (project.hasProperty('mainClass')) {
+        doFirst {
+            jvmArgs = ['--illegal-access=permit', '--add-opens', 'java.base/java.lang=ALL-UNNAMED']
+        }
+    }
 }
